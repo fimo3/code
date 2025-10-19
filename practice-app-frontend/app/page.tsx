@@ -1,12 +1,31 @@
+'use client';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
+interface Note {
+  id: number;
+  title: string;
+  content: string;
+}
+
 export default function Home() {
+  const [notes, setNotes] = useState<Note[]>([]);
+
+  useEffect(() => {
+    axios.get('http://localhost:8000/api/notes/')
+      .then(res => setNotes(res.data as Note[]))
+      .catch(err => console.error(err));
+  }, []);
+
   return (
-    <div className="font-sans grid grid-rows-2 items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <h1 className="text-4xl sm:text-6xl font-bold text-center">
-        Welcome to <span className="text-blue-600">Practice App</span>
-      </h1>
-      <div>
-        <p className="text-green-800 bg-emerald-400">This app is going to be made in django and next.js, also 你是同性恋.</p>
-      </div>
-    </div>
+    <main className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Notes</h1>
+      {notes.map(note => (
+        <div key={note.id} className="mb-2 p-4 border rounded">
+          <h2 className="font-semibold">{note.title}</h2>
+          <p>{note.content}</p>
+        </div>
+      ))}
+    </main>
   );
 }
